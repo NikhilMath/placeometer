@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Resume Analyzer — Placeometer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<!-- PDF.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<!-- Mammoth.js for DOCX -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+</head>
+<body>
+
+<!-- Fix #9: screen reader live region for parse completion -->
+<div aria-live="polite" aria-atomic="true"
+  style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);"
+  id="resumeLiveRegion"></div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="logo-icon">⬡</span><span>Placeometer</span>
+    </a>
+    <div class="nav-links">
+      <a href="resume.html" class="active-link">Resume</a>
+      <a href="github.html">GitHub</a>
+      <a href="linkedin.html">LinkedIn</a>
+      <a href="tasks.html">Tasks</a>
+    </div>
+    <a href="index.html" class="btn-nav">← Home</a>
+  </div>
+</nav>
+
+<div class="tool-page">
+  <div class="tool-header">
+    <div class="container">
+      <div class="tool-nav">
+        <a href="resume.html" class="active">📄 Resume</a>
+        <a href="github.html">⚙️ GitHub</a>
+        <a href="linkedin.html">🔗 LinkedIn</a>
+        <a href="tasks.html">📋 Tasks</a>
+      </div>
+      <h1>Resume Analyzer</h1>
+      <p>Upload your resume — we extract recruiter-facing signals, identify gaps, and generate practical improvement guidance.</p>
+    </div>
+  </div>
+
+  <div class="tool-body">
+    <div class="container">
+
+      <!-- Upload Zone -->
+      <div id="uploadSection">
+        <!-- Fix #13: label wraps the drop zone for accessible click-to-browse -->
+        <label class="upload-zone" id="uploadZone" for="resumeFile"
+          role="button" tabindex="0" aria-label="Upload resume. Supports PDF and DOCX. Click or drag and drop."
+          onkeydown="if(event.key==='Enter'||event.key===' '){document.getElementById('resumeFile').click()}">
+          <span class="upload-icon">📎</span>
+          <h3>Drop your resume here</h3>
+          <p>Supports PDF and DOCX — extracts recruiter-facing content and signals.</p>
+          <p class="upload-hint">Click to browse or drag and drop · Max 5 MB</p>
+          <input type="file" id="resumeFile" accept=".pdf,.docx" aria-label="Resume file input">
+        </label>
+
+        <!-- Fix #13: error state rendered here by js/resume.js -->
+
+        <div id="parsingState" style="display:none;margin-top:22px;">
+          <div class="panel">
+            <div class="panel-title">🔍 Parsing Resume… <span class="ptag">LIVE</span></div>
+            <div id="parseLog" style="font-family:monospace;font-size:13px;color:var(--text-2);line-height:2;" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div id="resultsSection" style="display:none;" aria-live="polite">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:12px;">
+          <div>
+            <div id="fileNameBadge" style="font-size:13px;color:var(--text-2);margin-bottom:5px;"></div>
+            <h2 style="font-family:var(--font-display);font-size:22px;font-weight:700;">Resume Analysis Complete</h2>
+          </div>
+          <button class="btn-secondary" onclick="resetAnalysis()">↑ Analyze Another</button>
+        </div>
+
+        <div class="analysis-layout">
+          <!-- Left: Detailed Analysis -->
+          <div style="display:flex;flex-direction:column;gap:20px;">
+
+            <div class="panel">
+              <div class="panel-title">📂 Section Detection <span class="ptag">PARSED</span></div>
+              <div id="sectionChips" class="section-chips"></div>
+              <div id="sectionNote" style="font-size:13px;color:var(--text-2);margin-top:6px;"></div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-title">🔑 ATS Match Signals <span class="ptag">PARSED</span></div>
+              <div id="keywordAnalysis"></div>
+            </div>
+
+            <div class="panel" style="border-color:rgba(74,222,128,0.25);background:rgba(8,12,20,0.4);">
+              <div class="panel-title" style="font-size:18px;color:var(--accent);">🛠️ How To Improve Your Resume</div>
+              <p style="font-size:13px;color:var(--text-2);margin-top:-14px;margin-bottom:18px;">Actionable improvements tailored to recruiter expectations and ATS readability.</p>
+              <div id="improvementsList" style="display:flex;flex-direction:column;gap:18px;"></div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-title">📝 Extracted Resume Text <span class="ptag">RAW</span></div>
+              <div id="extractedPreview" style="font-size:12px;color:var(--text-2);line-height:1.7;max-height:220px;overflow-y:auto;font-family:monospace;background:var(--bg-3);padding:14px;border-radius:8px;border:1px solid var(--border);white-space:pre-wrap;word-break:break-word;"></div>
+            </div>
+
+          </div>
+
+          <!-- Right: Score Panel -->
+          <div style="display:flex;flex-direction:column;gap:20px;">
+
+            <div class="panel">
+              <div class="panel-title">🎯 Recruiter Readiness Signal</div>
+              <div class="score-ring-wrap">
+                <div class="big-ring" id="resumeRingWrap"></div>
+                <div id="scoreGrade" class="score-grade"></div>
+                <div id="scoreDesc" class="score-desc"></div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-title">📊 Recruiter Evaluation Factors</div>
+              <div class="breakdown-list" id="breakdownList"></div>
+            </div>
+
+            <div class="panel" style="background:rgba(74,222,128,0.04);border-color:rgba(74,222,128,0.15);">
+              <div class="panel-title" style="color:var(--accent);">🚀 Recommended Next Steps</div>
+              <div style="display:flex;flex-direction:column;gap:10px;" id="nextSteps"></div>
+            </div>
+
+          </div>
+        </div>
+      </div><!-- /#resultsSection -->
+
+    </div>
+  </div>
+</div>
+
+<!-- Fix #8: all logic externalized -->
+<script src="main.js"></script>
+<script src="js/resume.js"></script>
+</body>
+</html>

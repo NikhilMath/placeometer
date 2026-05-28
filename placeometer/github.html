@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Tracker — Placeometer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <span class="logo-icon">⬡</span><span>Placeometer</span>
+    </a>
+    <div class="nav-links">
+      <a href="resume.html">Resume</a>
+      <a href="github.html" class="active-link">GitHub</a>
+      <a href="linkedin.html">LinkedIn</a>
+      <a href="tasks.html">Tasks</a>
+    </div>
+    <a href="index.html" class="btn-nav">← Home</a>
+  </div>
+</nav>
+
+<div class="tool-page">
+  <div class="tool-header">
+    <div class="container">
+      <div class="tool-nav">
+        <a href="resume.html">📄 Resume</a>
+        <a href="github.html" class="active">⚙️ GitHub</a>
+        <a href="linkedin.html">🔗 LinkedIn</a>
+        <a href="tasks.html">📋 Tasks</a>
+      </div>
+      <h1>GitHub Tracker</h1>
+      <p>Enter your GitHub username — we fetch your real profile data via the GitHub API and score your readiness.</p>
+    </div>
+  </div>
+
+  <div class="tool-body">
+    <div class="container">
+
+      <div class="github-form">
+        <div class="form-group">
+          <label class="form-label" for="ghUsername">GitHub Username</label>
+          <input type="text" class="form-input" id="ghUsername" placeholder="e.g. torvalds" autocomplete="off" />
+        </div>
+        <button class="btn-primary" onclick="fetchGitHub()" id="fetchBtn">Analyze GitHub →</button>
+      </div>
+
+      <div id="ghError" style="display:none;" role="alert"></div>
+
+      <div id="ghLoading" style="display:none;" aria-live="polite">
+        <div class="panel" style="text-align:center;padding:40px;">
+          <div style="font-size:32px;margin-bottom:12px;">⚙️</div>
+          <div style="font-family:var(--font-display);font-size:16px;font-weight:700;margin-bottom:8px;">Fetching GitHub Data...</div>
+          <div style="font-size:13px;color:var(--text-2);" id="ghLoadStep">Connecting to GitHub API...</div>
+        </div>
+      </div>
+
+      <div id="ghResults" style="display:none;" aria-live="polite">
+
+        <!-- Profile Card -->
+        <div class="panel" style="margin-bottom:20px;">
+          <div class="gh-profile">
+            <img id="ghAvatar" class="gh-avatar" src="" alt="GitHub avatar"
+              onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 72 72%22><rect fill=%22%231a2236%22 width=%2272%22 height=%2272%22 rx=%228%22/><text y=%2248%22 x=%2236%22 text-anchor=%22middle%22 font-size=%2232%22>👤</text></svg>'">
+            <div>
+              <div id="ghName" class="gh-name"></div>
+              <div id="ghBio" class="gh-bio"></div>
+              <div class="gh-meta" id="ghMeta"></div>
+            </div>
+            <div style="margin-left:auto;text-align:right;">
+              <div id="ghScoreBadge" style="font-family:var(--font-display);font-size:36px;font-weight:800;" aria-label="Recruiter index score"></div>
+              <div style="font-size:12px;color:var(--text-2);">Recruiter Index</div>
+            </div>
+          </div>
+          <!-- Fix #10: repo analysis scope note -->
+          <div id="repoAnalysisNote" style="font-size:12px;color:var(--text-3);margin-top:8px;"></div>
+        </div>
+
+        <div class="analysis-layout">
+          <div style="display:flex;flex-direction:column;gap:20px;">
+
+            <div class="panel">
+              <div class="panel-title">📁 Top Recruiter-Visible Projects <span class="ptag" id="repoCount">0 repos</span></div>
+              <div id="repoGrid" class="repo-grid"></div>
+            </div>
+
+            <div class="panel" style="border-color:rgba(59,130,246,0.25);background:rgba(8,12,20,0.4);">
+              <div class="panel-title" style="font-size:18px;color:var(--accent);">⚙️ How To Improve Your GitHub</div>
+              <p style="font-size:13px;color:var(--text-2);margin-top:-16px;margin-bottom:20px;">Actionable recommendations based on your public repositories and metadata.</p>
+              <div id="ghImprovementsList" style="display:flex;flex-direction:column;gap:20px;"></div>
+            </div>
+
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:20px;">
+
+            <div class="panel">
+              <div class="panel-title">🎯 Recruiter Credibility Index</div>
+              <div class="score-ring-wrap">
+                <div class="big-ring" id="ghRingWrap"></div>
+                <div id="ghScoreGrade" class="score-grade"></div>
+                <div id="ghScoreDesc" class="score-desc"></div>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-title">📊 Recruiter Index Breakdown</div>
+              <div class="breakdown-list" id="ghBreakdown"></div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-title">📈 Profile Signals</div>
+              <div id="ghSignals" style="display:flex;flex-direction:column;gap:10px;" aria-live="polite"></div>
+            </div>
+
+          </div>
+        </div>
+
+      </div><!-- /#ghResults -->
+    </div>
+  </div>
+</div>
+
+<!-- Fix #8: page logic in external file -->
+<script src="main.js"></script>
+<script src="js/github.js"></script>
+</body>
+</html>
