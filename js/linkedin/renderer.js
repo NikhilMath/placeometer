@@ -8,7 +8,7 @@ window.LinkedInRenderer = {
   },
 
   renderResults(analysis) {
-    const { profileScore, scoreMap, improvements, strengths, gaps, ocrWarnings } = analysis;
+    const { profileScore, scoreMap, improvements, strengths, gaps, ocrWarnings, projectStrengths, projectGaps, projectInsight, projectSuggestions } = analysis;
 
     // ── Score ring ────────────────────────────────────────────────────────
     const color = window.scoreColor(profileScore);
@@ -74,6 +74,19 @@ window.LinkedInRenderer = {
     );
     this._renderReportBox('insight_portfolio', 'insight', '💡 Portfolio Insight',
       'Featured builds are the fastest way to convert profile attention into recruiter confidence and interview requests.'
+    );
+
+    this._renderReportBox('strength_projects', 'strength', '🌟 Project Strengths',
+      LinkedInObservations.formatList(projectStrengths)
+    );
+    this._renderReportBox('gap_projects', 'gap', '⚠️ Project Gaps',
+      LinkedInObservations.formatList(projectGaps)
+    );
+    this._renderReportBox('insight_projects', 'insight', '💡 Project Insight',
+      projectInsight || 'Projects should clearly show the build, the stack, the links, and the outcomes.'
+    );
+    this._renderReportBox('suggestions_projects', 'insight', '🛠️ Project Improvement Suggestions',
+      LinkedInObservations.formatList(projectSuggestions)
     );
 
     this._renderReportBox('strength_activity', 'strength', '🌟 Activity Strength',

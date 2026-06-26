@@ -129,8 +129,21 @@
             <div class="paste-badge"><span>📋</span> Active for Paste</div>
           </div>
 
+          <div class="screenshot-card" id="card_projects">
+            <span class="section-badge">3. Projects (Recommended)</span>
+            <div class="upload-area" onclick="triggerFileInput('projects')" role="button" tabindex="0" aria-label="Upload projects screenshot">
+              <span class="upload-area-icon">🧩</span>
+              <span class="upload-area-title">Projects Evidence</span>
+              <span class="upload-area-subtitle">Project descriptions, project cards, project section</span>
+            </div>
+            <input type="file" id="file_projects" accept="image/*" multiple style="display:none;" onchange="handleFileSelect('projects',this)">
+            <div class="preview-gallery" id="gallery_projects"></div>
+            <button class="btn-add-another" id="btn_add_projects" style="display:none;" onclick="triggerFileInput('projects')">+ Add Screenshot</button>
+            <div class="paste-badge"><span>📋</span> Active for Paste</div>
+          </div>
+
           <div class="screenshot-card" id="card_featured">
-            <span class="section-badge">3. Featured Projects (Required)</span>
+            <span class="section-badge">4. Featured Projects (Required)</span>
             <div class="upload-area" onclick="triggerFileInput('featured')" role="button" tabindex="0" aria-label="Upload featured projects screenshot">
               <span class="upload-area-icon">📌</span>
               <span class="upload-area-title">Featured Builds Evidence</span>
@@ -143,7 +156,7 @@
           </div>
 
           <div class="screenshot-card" id="card_experience">
-            <span class="section-badge">4. Experience (Optional)</span>
+            <span class="section-badge">5. Experience (Optional)</span>
             <div class="upload-area" onclick="triggerFileInput('experience')" role="button" tabindex="0" aria-label="Upload experience screenshot">
               <span class="upload-area-icon">🏛️</span>
               <span class="upload-area-title">Experience Evidence</span>
@@ -156,7 +169,7 @@
           </div>
 
           <div class="screenshot-card" id="card_activity">
-            <span class="section-badge">5. Activity Feed (Optional)</span>
+            <span class="section-badge">6. Activity Feed (Optional)</span>
             <div class="upload-area" onclick="triggerFileInput('activity')" role="button" tabindex="0" aria-label="Upload activity feed screenshot">
               <span class="upload-area-icon">📈</span>
               <span class="upload-area-title">Activity Feed Evidence</span>
@@ -169,7 +182,7 @@
           </div>
 
           <div class="screenshot-card" id="card_skills">
-            <span class="section-badge">6. Skills (Optional)</span>
+            <span class="section-badge">7. Skills (Optional)</span>
             <div class="upload-area" onclick="triggerFileInput('skills')" role="button" tabindex="0" aria-label="Upload skills screenshot">
               <span class="upload-area-icon">🔑</span>
               <span class="upload-area-title">Skills Evidence</span>
@@ -182,7 +195,7 @@
           </div>
 
           <div class="screenshot-card" id="card_certifications">
-            <span class="section-badge">7. Certifications (Optional)</span>
+            <span class="section-badge">8. Certifications (Optional)</span>
             <div class="upload-area" onclick="triggerFileInput('certifications')" role="button" tabindex="0" aria-label="Upload certifications screenshot">
               <span class="upload-area-icon">🎓</span>
               <span class="upload-area-title">Certifications Evidence</span>
@@ -274,14 +287,22 @@
           </div>
 
           <div class="report-section">
-            <div class="report-section-header"><span style="font-size:20px;">📈</span><span class="report-section-title">4. Activity & Networking</span></div>
+            <div class="report-section-header"><span style="font-size:20px;">🧩</span><span class="report-section-title">4. Project Evidence</span></div>
+            <div class="report-box strength" id="strength_projects"></div>
+            <div class="report-box gap"      id="gap_projects"></div>
+            <div class="report-box insight"  id="insight_projects"></div>
+            <div class="report-box insight"  id="suggestions_projects"></div>
+          </div>
+
+          <div class="report-section">
+            <div class="report-section-header"><span style="font-size:20px;">📈</span><span class="report-section-title">5. Activity & Networking</span></div>
             <div class="report-box strength" id="strength_activity"></div>
             <div class="report-box gap"      id="gap_activity"></div>
             <div class="report-box insight"  id="insight_activity"></div>
           </div>
 
           <div class="report-section">
-            <div class="report-section-header"><span style="font-size:20px;">🌐</span><span class="report-section-title">5. Proof of Work Visibility</span></div>
+            <div class="report-section-header"><span style="font-size:20px;">🌐</span><span class="report-section-title">6. Proof of Work Visibility</span></div>
             <div class="report-box strength" id="strength_pow"></div>
             <div class="report-box gap"      id="gap_pow"></div>
             <div class="report-box insight"  id="insight_pow"></div>
